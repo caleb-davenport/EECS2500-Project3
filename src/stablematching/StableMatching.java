@@ -13,6 +13,7 @@ package stablematching;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import javafx.application.Application;
@@ -26,9 +27,10 @@ import javafx.util.Pair;
 
 public class StableMatching extends Application {
     
-    protected LinkedList<Person> ProposerList = new LinkedList<>();
-    protected LinkedList<Person> AcceptorList = new LinkedList<>();
-    protected LinkedList<Pair<Person, Person>> Solution = new LinkedList<>();
+    protected LinkedList<Proposer> ProposerList = new LinkedList<>();
+    protected LinkedList<Acceptor> AcceptorList = new LinkedList<>();
+    protected LinkedList<Pair<Proposer, Acceptor>> Solution = new LinkedList<>();
+    Problem problem = new Problem(ProposerList, AcceptorList, Solution);
     int numCouples;
 
     @Override
@@ -66,14 +68,14 @@ public class StableMatching extends Application {
             String name = fileInput.nextLine();
             fileInput.nextLine();
             //LinkedList preferences = stringToLinkedList(fileInput.nextLine());
-            Person p = new Proposer(name);
+            Proposer p = new Proposer(name);
             ProposerList.add(p);
         }
         for (int i = 0; i < numCouples*2; i=i+2) {
             String name = fileInput.nextLine();
             fileInput.nextLine();
             //LinkedList preferences = stringToLinkedList(fileInput.nextLine());
-            Person p = new Acceptor(name);
+            Acceptor p = new Acceptor(name);
             AcceptorList.add(p);
         }
         fileInput = new Scanner(f);
@@ -100,6 +102,22 @@ public class StableMatching extends Application {
         for (int i = 0; i < numCouples; i++) {
             System.out.println(ProposerList.get(i).getName());
             System.out.println(AcceptorList.get(i).getName());
+        }
+        
+        //Proposal Loop
+        LinkedList<Proposer> unmatchedProposers = problem.getUnmatchedProposers(ProposerList);
+        Acceptor a;
+        while (!unmatchedProposers.isEmpty()) {
+            for (Proposer p : ProposerList) {
+                a = p.nextPref();
+                if (a.isPreferable(p)) {
+                    a.setPartner(p);
+                    p.setPartner(a);
+                } else {
+                    p.setPartner(null);
+                }
+            }
+            unmatchedProposers = problem.getUnmatchedProposers(ProposerList);
         }
     }
     

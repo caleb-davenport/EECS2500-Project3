@@ -12,13 +12,15 @@ public class Acceptor extends Person {
         super(name);
     }
 
-    public boolean isBetterPartner(Proposer newProposer) {
+    public boolean isPreferable(Proposer newProposer) throws Exception {
         int n = 0;
-        Object currentElement = preferences.get(n);
-        while (true) {
-            if (currentElement == newProposer) return true;
-            if (currentElement == this.getPartner()) return true;
-            currentElement = preferences.get(++n);
+        for (Person p : preferences) {
+            if (p == newProposer) return true;
+            if (p == this.getPartner()) return false;
         }
+        Exception e = new RuntimeException();
+        e.initCause(new Throwable("Proposer not found in list!" + 
+                                  "(THIS SHOULD NEVER HAAPEN!!)"));
+        throw e;
     }
 }

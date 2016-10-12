@@ -1,5 +1,6 @@
 package stablematching;
 
+import java.util.LinkedList;
 import javafx.util.Pair;
 
 import javax.lang.model.element.Element;
@@ -9,38 +10,54 @@ import java.util.List;
  * Created by rmartin- on 9/30/16.
  */
 public class Problem {
-    protected List<Object> ProposerList;
-    protected List<Object> AcceptorList;
-    protected List<Pair<Object, Object>> Solution;
+    protected List<Proposer> ProposerList;
+    protected List<Acceptor> AcceptorList;
+    protected List<Pair<Proposer, Acceptor>> Solution;
 
-    Problem(List<Object> ProposerList, List<Object> AcceptorList, List<Pair<Object, Object>> Solution) {
+    Problem(List<Proposer> ProposerList, List<Acceptor> AcceptorList, List<Pair<Proposer, Acceptor>> Solution) {
         this.ProposerList = ProposerList;
         this.AcceptorList = AcceptorList;
         this.Solution = Solution;
     }
 
-    void addProposer(Object proposer) {
+    void addProposer(Proposer proposer) {
         ProposerList.add(proposer);
     }
 
-    void addAcceptor(Object acceptor) {
-        ProposerList.add(acceptor);
+    void addAcceptor(Acceptor acceptor) {
+        AcceptorList.add(acceptor);
     }
 
-    List<Object> getProposerList() {
-        return AcceptorList;
-    }
-
-    List<Object> getAcceptorList() {
+    List<Proposer> getProposerList() {
         return ProposerList;
     }
 
-    void setProposerList (int index, Object proposer) {
+    List<Acceptor> getAcceptorList() {
+        return AcceptorList;
+    }
+
+    void setProposerList (int index, Proposer proposer) {
         ProposerList.set(index, proposer);
     }
 
-    void setAcceptorList (int index, Object acceptor) {
+    void setAcceptorList (int index, Acceptor acceptor) {
         AcceptorList.set(index, acceptor);
+    }
+    
+//    void facilitateProposal(Proposer p) {
+//        switch (p) {
+//            case
+//        }
+//    }
+    
+    LinkedList<Proposer> getUnmatchedProposers(List<Proposer> people) {
+        LinkedList<Proposer> unmatchedPeople = new LinkedList<>();
+        for (Proposer p : people) {
+            if (p.getPartner() == null) {
+                unmatchedPeople.add(p);
+            }
+        }
+        return unmatchedPeople;
     }
 
 }
