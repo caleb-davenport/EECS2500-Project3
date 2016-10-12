@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by rmartin- on 9/30/16.
  */
-public abstract class Problem {
+public class Problem {
     protected List<Object> ProposerList;
     protected List<Object> AcceptorList;
     protected List<Pair<Object, Object>> Solution;
@@ -18,8 +18,6 @@ public abstract class Problem {
         this.AcceptorList = AcceptorList;
         this.Solution = Solution;
     }
-
-    abstract List<Pair<Object, Object>> Solve();
 
     void addProposer(Object proposer) {
         ProposerList.add(proposer);

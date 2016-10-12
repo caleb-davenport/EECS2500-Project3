@@ -11,7 +11,10 @@
 package stablematching;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,18 +22,28 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 public class StableMatching extends Application {
+    
+    protected LinkedList<Person> ProposerList = new LinkedList<>();
+    protected LinkedList<Person> AcceptorList = new LinkedList<>();
+    protected LinkedList<Pair<Person, Person>> Solution = new LinkedList<>();
+    int numCouples;
 
     @Override
     public void start(Stage primaryStage) {
         Button btn = new Button();
-        btn.setText("Say 'Hello World'");
+        btn.setText("Output People");
         btn.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
+                System.out.println("List of People");
+                try {
+                    startProblem();
+                } catch(Exception e) {
+                }
             }
         });
 
@@ -47,6 +60,61 @@ public class StableMatching extends Application {
     public void startProblem() throws Exception {
         File f = new File("preferences.txt");
         Scanner fileInput = new Scanner(f);
+        numCouples = fileInput.nextInt();
+        fileInput.nextLine();
+        for (int i = 0; i < numCouples*2; i=i+2) {
+            String name = fileInput.nextLine();
+            fileInput.nextLine();
+            //LinkedList preferences = stringToLinkedList(fileInput.nextLine());
+            Person p = new Proposer(name);
+            ProposerList.add(p);
+        }
+        for (int i = 0; i < numCouples*2; i=i+2) {
+            String name = fileInput.nextLine();
+            fileInput.nextLine();
+            //LinkedList preferences = stringToLinkedList(fileInput.nextLine());
+            Person p = new Acceptor(name);
+            AcceptorList.add(p);
+        }
+        fileInput = new Scanner(f);
+        for (int i = 0; i < numCouples; i++) {
+            String name = fileInput.nextLine();
+            LinkedList preferences = stringToLinkedList(fileInput.nextLine());
+            for (int j = 0; j < numCouples; j++) {
+                if (ProposerList.get(j).getName().equals(name)) {
+                    ProposerList.get(j).setPreferences(preferences);
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i < numCouples; i++) {
+            String name = fileInput.nextLine();
+            LinkedList preferences = stringToLinkedList(fileInput.nextLine());
+            for (int j = 0; j < numCouples; j++) {
+                if (AcceptorList.get(j).getName().equals(name)) {
+                    AcceptorList.get(j).setPreferences(preferences);
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i < numCouples; i++) {
+            System.out.println(ProposerList.get(i).getName());
+            System.out.println(AcceptorList.get(i).getName());
+        }
+    }
+    
+    private LinkedList stringToLinkedList(String s) {
+        LinkedList<Person> preferences = new LinkedList<>();
+        String[] rawPreferences = s.split("\\s+");
+        for (int i = 0; i < rawPreferences.length; i++) {
+            for (int j = 0; j < numCouples; j++) {
+                if (ProposerList.get(j).getName().equals(rawPreferences[i])) {
+                    preferences.add(ProposerList.get(j));
+                    break;
+                }
+            }
+        }
+        return preferences;
     }
 
     /**

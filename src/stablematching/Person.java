@@ -3,12 +3,16 @@ package stablematching;
 import java.util.LinkedList;
 
 public abstract class Person {
-    public final String     name;
-    public final LinkedList preferences;
-    private      Person     partner;
+    private final String             name;
+    public LinkedList<Person> preferences;
+    private      Person             partner;
     Person(String name, LinkedList preferences) {
         this.name = name;
         this.preferences = preferences;
+    }
+    
+    Person(String name) {
+        this.name = name;
     }
     
     public void removePartner() {
@@ -19,8 +23,16 @@ public abstract class Person {
         this.partner = partner;
     }
     
+    public void setPreferences(LinkedList<Person> preferences) {
+        this.preferences = preferences;
+    }
+    
     public Person getPartner() {
         return this.partner;
+    }
+    
+    public String getName() {
+        return this.name;
     }
      
 }
