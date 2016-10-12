@@ -5,6 +5,7 @@ import javafx.util.Pair;
 
 import javax.lang.model.element.Element;
 import java.util.List;
+import javafx.collections.ObservableList;
 
 /**
  * Created by rmartin- on 9/30/16.
@@ -12,9 +13,9 @@ import java.util.List;
 public class Problem {
     protected List<Proposer> ProposerList;
     protected List<Acceptor> AcceptorList;
-    protected List<Pair<Proposer, Acceptor>> Solution;
+    protected ObservableList<Pair<Proposer, Acceptor>> Solution;
 
-    Problem(List<Proposer> ProposerList, List<Acceptor> AcceptorList, List<Pair<Proposer, Acceptor>> Solution) {
+    Problem(List<Proposer> ProposerList, List<Acceptor> AcceptorList, ObservableList<Pair<Proposer, Acceptor>> Solution) {
         this.ProposerList = ProposerList;
         this.AcceptorList = AcceptorList;
         this.Solution = Solution;

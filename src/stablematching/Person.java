@@ -27,6 +27,14 @@ public abstract class Person {
         this.preferences = preferences;
     }
     
+    public String outputPreferences() {
+        String s = "";
+        for (int i = 0; i < 5; i++) {
+            s = s.concat(preferences.get(i).getName());
+        }
+        return s;
+    }
+    
     public Person getPartner() {
         return this.partner;
     }
