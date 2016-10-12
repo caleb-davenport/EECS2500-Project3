@@ -12,9 +12,7 @@ package stablematching;
 
 import java.io.File;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -77,9 +75,10 @@ public class StableMatching extends Application {
             AcceptorList.add(p);
         }
         fileInput = new Scanner(f);
+        fileInput.nextLine();
         for (int i = 0; i < numCouples; i++) {
             String name = fileInput.nextLine();
-            LinkedList preferences = stringToLinkedList(fileInput.nextLine());
+            LinkedList preferences = stringToLinkedList(fileInput.nextLine(), AcceptorList);
             for (int j = 0; j < numCouples; j++) {
                 if (ProposerList.get(j).getName().equals(name)) {
                     ProposerList.get(j).setPreferences(preferences);
@@ -89,7 +88,7 @@ public class StableMatching extends Application {
         }
         for (int i = 0; i < numCouples; i++) {
             String name = fileInput.nextLine();
-            LinkedList preferences = stringToLinkedList(fileInput.nextLine());
+            LinkedList preferences = stringToLinkedList(fileInput.nextLine(), ProposerList);
             for (int j = 0; j < numCouples; j++) {
                 if (AcceptorList.get(j).getName().equals(name)) {
                     AcceptorList.get(j).setPreferences(preferences);
@@ -99,17 +98,20 @@ public class StableMatching extends Application {
         }
         for (int i = 0; i < numCouples; i++) {
             System.out.println(ProposerList.get(i).getName());
+            System.out.println(ProposerList.get(i).outputPreferences());
             System.out.println(AcceptorList.get(i).getName());
+            System.out.println(AcceptorList.get(i).outputPreferences());
         }
     }
     
-    private LinkedList stringToLinkedList(String s) {
+    private LinkedList stringToLinkedList(String s, LinkedList<Person> list) {
         LinkedList<Person> preferences = new LinkedList<>();
         String[] rawPreferences = s.split("\\s+");
         for (int i = 0; i < rawPreferences.length; i++) {
             for (int j = 0; j < numCouples; j++) {
-                if (ProposerList.get(j).getName().equals(rawPreferences[i])) {
-                    preferences.add(ProposerList.get(j));
+                Person p = list.get(j);
+                if (p.getName().equals(rawPreferences[i])) {
+                    preferences.add(p);
                     break;
                 }
             }
