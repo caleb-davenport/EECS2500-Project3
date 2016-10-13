@@ -21,15 +21,21 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class StableMatching extends Application {
 
     protected TableView<Proposer> TABLE = new TableView<>();
+    protected VBox MENU = new VBox();
     protected LinkedList<Proposer> ProposerList = new LinkedList<>();
     protected LinkedList<Acceptor> AcceptorList = new LinkedList<>();
     protected Problem problem;
@@ -43,9 +49,38 @@ public class StableMatching extends Application {
     @Override
     public void start(Stage primaryStage) {
         updateTable();
-        Button btn = new Button();
-        btn.setText("Output People");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
+        updateMenu();
+
+        BorderPane root = new BorderPane();
+        root.setTop(MENU);
+        root.setCenter(TABLE);
+
+        Scene scene = new Scene(root, 300, 250);
+
+        primaryStage.setTitle("Stable Marriage");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    
+    private void updateMenu() {
+        HBox textField = new HBox();
+        Label text = new Label("Filename: ");
+        TextField inputFileTextField = new TextField();
+        Button btn = new Button("Load");
+        textField.getChildren().addAll(text, inputFileTextField, btn);
+        
+        final ToggleGroup groupSelect = new ToggleGroup();
+
+        RadioButton rb1 = new RadioButton("Group 1 Selects");
+        rb1.setToggleGroup(groupSelect);
+        rb1.setSelected(true);
+
+        RadioButton rb2 = new RadioButton("Group 2 Selects");
+        rb2.setToggleGroup(groupSelect);
+        
+        Button startButton = new Button();
+        startButton.setText("Generate Marriages");
+        startButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent event) {
@@ -56,18 +91,8 @@ public class StableMatching extends Application {
                 }
             }
         });
-
-        BorderPane root = new BorderPane();
-        root.setTop(btn);
-        root.setCenter(TABLE);
-
-        Scene scene = new Scene(root, 300, 250);
-
-        primaryStage.setTitle("Hello World!");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        MENU.getChildren().addAll(textField, rb1, rb2, startButton);
     }
-
     private void updateTable() {
         TableColumn acceptors;
         TableColumn proposers;
@@ -77,10 +102,15 @@ public class StableMatching extends Application {
         acceptors.setCellValueFactory(new PropertyValueFactory<>("name"));
         proposers = new TableColumn("Partner");
         proposers.setCellValueFactory(new PropertyValueFactory<>("partnerName"));
+        
+        acceptors.prefWidthProperty().bind(TABLE.widthProperty()
+                .multiply(0.5));
+        proposers.prefWidthProperty().bind(TABLE.widthProperty()
+                .multiply(0.5).subtract(2));
 
         TABLE.setItems(Solution);
         TABLE.getColumns().addAll(acceptors, proposers);
-        TABLE.setPlaceholder(new Label("No entries found"));
+        TABLE.setPlaceholder(new Label("No marriages generated yet."));
     }
 
     public void startProblem() throws Exception {
