@@ -29,6 +29,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -42,7 +43,6 @@ public class StableMatching extends Application {
     protected ObservableList<Proposer> Solution = FXCollections.observableArrayList();
     protected int numCouples;
     protected String FILE_NAME;
-    
 
     public StableMatching() {
         this.problem = new Problem(ProposerList, AcceptorList, Solution);
@@ -63,7 +63,7 @@ public class StableMatching extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    
+
     private void updateMenu() {
         HBox textField = new HBox();
         Label text = new Label("Filename: ");
@@ -77,7 +77,7 @@ public class StableMatching extends Application {
             }
         });
         textField.getChildren().addAll(text, inputFileTextField, textButton);
-        
+
         final ToggleGroup groupSelect = new ToggleGroup();
 
         RadioButton rb1 = new RadioButton("Group 1 Selects");
@@ -86,7 +86,7 @@ public class StableMatching extends Application {
 
         RadioButton rb2 = new RadioButton("Group 2 Selects");
         rb2.setToggleGroup(groupSelect);
-        
+
         Button startButton = new Button();
         startButton.setText("Generate Marriages");
         startButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -96,12 +96,23 @@ public class StableMatching extends Application {
                 System.out.println("List of People");
                 try {
                     startProblem();
+                    displayMarriages();
                 } catch (Exception e) {
                 }
             }
         });
         MENU.getChildren().addAll(textField, rb1, rb2, startButton);
     }
+
+    private void displayMarriages() {
+        StackPane root = new StackPane();
+        root.getChildren().add(TABLE);
+        Stage stage = new Stage();
+        stage.setTitle("Final Marriages");
+        stage.setScene(new Scene(root, 300, 250));
+        stage.show();
+    }
+
     private void updateTable() {
         TableColumn acceptors;
         TableColumn proposers;
@@ -111,7 +122,7 @@ public class StableMatching extends Application {
         acceptors.setCellValueFactory(new PropertyValueFactory<>("name"));
         proposers = new TableColumn("Partner");
         proposers.setCellValueFactory(new PropertyValueFactory<>("partnerName"));
-        
+
         acceptors.prefWidthProperty().bind(TABLE.widthProperty()
                 .multiply(0.5));
         proposers.prefWidthProperty().bind(TABLE.widthProperty()
@@ -127,13 +138,13 @@ public class StableMatching extends Application {
         Scanner fileInput = new Scanner(f);
         numCouples = fileInput.nextInt();
         fileInput.nextLine();
-        for (int i = 0; i < numCouples*2; i=i+2) {
+        for (int i = 0; i < numCouples * 2; i = i + 2) {
             String name = fileInput.nextLine();
             fileInput.nextLine();
             Proposer p = new Proposer(name);
             ProposerList.add(p);
         }
-        for (int i = 0; i < numCouples*2; i=i+2) {
+        for (int i = 0; i < numCouples * 2; i = i + 2) {
             String name = fileInput.nextLine();
             fileInput.nextLine();
             Acceptor p = new Acceptor(name);
@@ -176,7 +187,9 @@ public class StableMatching extends Application {
             for (Proposer p : unmatchedProposers) {
                 a = (Acceptor) p.nextPref();
                 if (a.isPreferable(p)) {
-                    if (a.isEngaged) a.getPartner().removePartner();
+                    if (a.isEngaged) {
+                        a.getPartner().removePartner();
+                    }
                     a.setPartner(p);
                     a.isEngaged = true;
                     p.setPartner(a);
