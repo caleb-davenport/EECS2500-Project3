@@ -206,9 +206,9 @@ public class StableMatching extends Application {
             }
         }
         for (int i = 0; i < numCouples; i++) {
-            System.out.println(proposerList.get(i).getName());
+            System.out.print(proposerList.get(i).getName() + ":\t");
             System.out.println(proposerList.get(i).outputPreferences());
-            System.out.println(acceptorList.get(i).getName());
+            System.out.print(acceptorList.get(i).getName() + ":\t");
             System.out.println(acceptorList.get(i).outputPreferences());
             solution.add(proposerList.get(i));
         }
