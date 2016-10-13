@@ -8,7 +8,7 @@ public class Proposer extends Person {
     
     ListIterator<Acceptor> prefIter;
     Acceptor fiance;
-    
+
     public Proposer(String name, LinkedList<Acceptor> preferences) {
         super(name, preferences);
         prefIter = preferences.listIterator();

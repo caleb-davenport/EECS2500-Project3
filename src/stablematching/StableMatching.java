@@ -29,12 +29,12 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 public class StableMatching extends Application {
-    
-    protected TableView<Pair<Proposer, Acceptor>> TABLE = new TableView<>();
+
+    protected TableView<Proposer> TABLE = new TableView<>();
     protected LinkedList<Proposer> ProposerList = new LinkedList<>();
     protected LinkedList<Acceptor> AcceptorList = new LinkedList<>();
     protected Problem problem;
-    protected ObservableList<Pair<Proposer, Acceptor>> Solution = FXCollections.observableArrayList();
+    protected ObservableList<Proposer> Solution = FXCollections.observableArrayList();
     int numCouples;
 
     public StableMatching() {
@@ -53,7 +53,7 @@ public class StableMatching extends Application {
                 System.out.println("List of People");
                 try {
                     startProblem();
-                } catch(Exception e) {
+                } catch (Exception e) {
                 }
             }
         });
@@ -68,22 +68,22 @@ public class StableMatching extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    
+
     private void updateTable() {
         TableColumn acceptors;
         TableColumn proposers;
-        
+
         TABLE.getColumns().clear();
         acceptors = new TableColumn("Name");
         acceptors.setCellValueFactory(new PropertyValueFactory<>("name"));
-        proposers = new TableColumn("Name");
-        proposers.setCellValueFactory(new PropertyValueFactory<>("name"));
+        proposers = new TableColumn("Partner");
+        proposers.setCellValueFactory(new PropertyValueFactory<>("partnerName"));
 
         TABLE.setItems(Solution);
         TABLE.getColumns().addAll(acceptors, proposers);
         TABLE.setPlaceholder(new Label("No entries found"));
     }
-    
+
     public void startProblem() throws Exception {
         File f = new File("preferences.txt");
         Scanner fileInput = new Scanner(f);
@@ -92,14 +92,12 @@ public class StableMatching extends Application {
         for (int i = 0; i < numCouples*2; i=i+2) {
             String name = fileInput.nextLine();
             fileInput.nextLine();
-            //LinkedList preferences = stringToLinkedList(fileInput.nextLine());
             Proposer p = new Proposer(name);
             ProposerList.add(p);
         }
         for (int i = 0; i < numCouples*2; i=i+2) {
             String name = fileInput.nextLine();
             fileInput.nextLine();
-            //LinkedList preferences = stringToLinkedList(fileInput.nextLine());
             Acceptor p = new Acceptor(name);
             AcceptorList.add(p);
         }
@@ -130,8 +128,9 @@ public class StableMatching extends Application {
             System.out.println(ProposerList.get(i).outputPreferences());
             System.out.println(AcceptorList.get(i).getName());
             System.out.println(AcceptorList.get(i).outputPreferences());
+            Solution.add(ProposerList.get(i));
         }
- 
+
         //Proposal Loop
         LinkedList<Proposer> unmatchedProposers = problem.getUnmatchedProposers(ProposerList);
         Acceptor a;
@@ -147,8 +146,8 @@ public class StableMatching extends Application {
             }
             unmatchedProposers = problem.getUnmatchedProposers(ProposerList);
         }
-     }
-    
+    }
+
     private LinkedList stringToAcceptorLinkedList(String s, LinkedList<Acceptor> list) {
         LinkedList<Person> preferences = new LinkedList<>();
         String[] rawPreferences = s.split("\\s+");
@@ -163,7 +162,7 @@ public class StableMatching extends Application {
         }
         return preferences;
     }
-    
+
     private LinkedList stringToProposerLinkedList(String s, LinkedList<Proposer> list) {
         LinkedList<Person> preferences = new LinkedList<>();
         String[] rawPreferences = s.split("\\s+");

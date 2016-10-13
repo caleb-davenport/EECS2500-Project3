@@ -13,9 +13,9 @@ import javafx.collections.ObservableList;
 public class Problem {
     protected List<Proposer> ProposerList;
     protected List<Acceptor> AcceptorList;
-    protected ObservableList<Pair<Proposer, Acceptor>> Solution;
+    protected ObservableList<Proposer> Solution;
 
-    Problem(List<Proposer> ProposerList, List<Acceptor> AcceptorList, ObservableList<Pair<Proposer, Acceptor>> Solution) {
+    Problem(List<Proposer> ProposerList, List<Acceptor> AcceptorList, ObservableList<Proposer> Solution) {
         this.ProposerList = ProposerList;
         this.AcceptorList = AcceptorList;
         this.Solution = Solution;

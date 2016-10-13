@@ -39,6 +39,11 @@ public abstract class Person {
         return this.partner;
     }
     
+    public String getPartnerName() {
+        return "Test";
+        //return this.partner.name;
+    }
+    
     public String getName() {
         return this.name;
     }
