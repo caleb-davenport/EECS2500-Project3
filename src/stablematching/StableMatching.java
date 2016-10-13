@@ -12,6 +12,7 @@ package stablematching;
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -37,16 +38,12 @@ public class StableMatching extends Application {
 
     protected TableView<Proposer> TABLE = new TableView<>();
     protected VBox MENU = new VBox();
-    protected LinkedList<Proposer> ProposerList = new LinkedList<>();
-    protected LinkedList<Acceptor> AcceptorList = new LinkedList<>();
-    protected Problem problem;
-    protected ObservableList<Proposer> Solution = FXCollections.observableArrayList();
+    protected LinkedList<Proposer> proposerList = new LinkedList<>();
+    protected LinkedList<Acceptor> acceptorList = new LinkedList<>();
+    protected ObservableList<Proposer> solution =
+            FXCollections.observableArrayList();
     protected int numCouples;
     protected String FILE_NAME;
-
-    public StableMatching() {
-        this.problem = new Problem(ProposerList, AcceptorList, Solution);
-    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -95,7 +92,7 @@ public class StableMatching extends Application {
             public void handle(ActionEvent event) {
                 System.out.println("List of People");
                 try {
-                    startProblem(false);
+                    startProblem(groupSelect.getSelectedToggle().equals(rb1));
                     displayMarriages();
                 } catch (Exception e) {
                 }
@@ -121,14 +118,15 @@ public class StableMatching extends Application {
         acceptors = new TableColumn("Name");
         acceptors.setCellValueFactory(new PropertyValueFactory<>("name"));
         proposers = new TableColumn("Partner");
-        proposers.setCellValueFactory(new PropertyValueFactory<>("partnerName"));
+        proposers.setCellValueFactory(
+                new PropertyValueFactory<>("partnerName"));
 
         acceptors.prefWidthProperty().bind(TABLE.widthProperty()
                 .multiply(0.5));
         proposers.prefWidthProperty().bind(TABLE.widthProperty()
                 .multiply(0.5).subtract(2));
 
-        TABLE.setItems(Solution);
+        TABLE.setItems(solution);
         TABLE.getColumns().addAll(acceptors, proposers);
         TABLE.setPlaceholder(new Label("No marriages generated yet."));
     }
@@ -144,10 +142,10 @@ public class StableMatching extends Application {
             fileInput.nextLine();
             if (firstProposes) {
                 Proposer p = new Proposer(name);
-                ProposerList.add(p);
+                proposerList.add(p);
             } else {
                 Acceptor p = new Acceptor(name);
-                AcceptorList.add(p);
+                acceptorList.add(p);
             }
         }
         for (int i = 0; i < numCouples * 2; i = i + 2) {
@@ -155,10 +153,10 @@ public class StableMatching extends Application {
             fileInput.nextLine();
             if (!firstProposes) {
                 Proposer p = new Proposer(name);
-                ProposerList.add(p);
+                proposerList.add(p);
             } else {
                 Acceptor p = new Acceptor(name);
-                AcceptorList.add(p);
+                acceptorList.add(p);
             }
         }
         fileInput = new Scanner(f);
@@ -167,19 +165,19 @@ public class StableMatching extends Application {
             String name = fileInput.nextLine();
             if (firstProposes) {
                 preferences = stringToAcceptorLinkedList(fileInput.nextLine(),
-                        AcceptorList);
+                        acceptorList);
             } else {
                 preferences = stringToProposerLinkedList(fileInput.nextLine(),
-                        ProposerList);
+                        proposerList);
             }
             for (int j = 0; j < numCouples; j++) {
                 if (firstProposes) {
-                    if (ProposerList.get(j).getName().equals(name)) {
-                        ProposerList.get(j).setPreferences(preferences);
+                    if (proposerList.get(j).getName().equals(name)) {
+                        proposerList.get(j).setPreferences(preferences);
                         break;
                     }
-                } else if (AcceptorList.get(j).getName().equals(name)) {
-                    AcceptorList.get(j).setPreferences(preferences);
+                } else if (acceptorList.get(j).getName().equals(name)) {
+                    acceptorList.get(j).setPreferences(preferences);
                     break;
                 }
             }
@@ -188,35 +186,36 @@ public class StableMatching extends Application {
             String name = fileInput.nextLine();
             if (!firstProposes) {
                 preferences = stringToAcceptorLinkedList(fileInput.nextLine(),
-                        AcceptorList);
+                        acceptorList);
             } else {
                 preferences = stringToProposerLinkedList(fileInput.nextLine(),
-                        ProposerList);
+                        proposerList);
             }
             for (int j = 0; j < numCouples; j++) {
                 if (!firstProposes) {
-                    if (ProposerList.get(j).getName().equals(name)) {
-                        ProposerList.get(j).setPreferences(preferences);
+                    if (proposerList.get(j).getName().equals(name)) {
+                        proposerList.get(j).setPreferences(preferences);
                         break;
                     }
                 } else {
-                    if (AcceptorList.get(j).getName().equals(name)) {
-                        AcceptorList.get(j).setPreferences(preferences);
+                    if (acceptorList.get(j).getName().equals(name)) {
+                        acceptorList.get(j).setPreferences(preferences);
                         break;
                     } 
                 }
             }
         }
         for (int i = 0; i < numCouples; i++) {
-            System.out.println(ProposerList.get(i).getName());
-            System.out.println(ProposerList.get(i).outputPreferences());
-            System.out.println(AcceptorList.get(i).getName());
-            System.out.println(AcceptorList.get(i).outputPreferences());
-            Solution.add(ProposerList.get(i));
+            System.out.println(proposerList.get(i).getName());
+            System.out.println(proposerList.get(i).outputPreferences());
+            System.out.println(acceptorList.get(i).getName());
+            System.out.println(acceptorList.get(i).outputPreferences());
+            solution.add(proposerList.get(i));
         }
 
         //Proposal Loop
-        LinkedList<Proposer> unmatchedProposers = problem.getUnmatchedProposers(ProposerList);
+        LinkedList<Proposer> unmatchedProposers =
+                getUnmatchedProposers(proposerList);
         Acceptor a;
         while (!unmatchedProposers.isEmpty()) {
             for (Proposer p : unmatchedProposers) {
@@ -231,11 +230,12 @@ public class StableMatching extends Application {
                     p.isEngaged = true;
                 }
             }
-            unmatchedProposers = problem.getUnmatchedProposers(ProposerList);
+            unmatchedProposers = getUnmatchedProposers(proposerList);
         }
     }
 
-    private LinkedList stringToAcceptorLinkedList(String s, LinkedList<Acceptor> list) {
+    private LinkedList stringToAcceptorLinkedList(String s,
+                                                  LinkedList<Acceptor> list) {
         LinkedList<Person> preferences = new LinkedList<>();
         String[] rawPreferences = s.split("\\s+");
         for (int i = 0; i < rawPreferences.length; i++) {
@@ -250,7 +250,8 @@ public class StableMatching extends Application {
         return preferences;
     }
 
-    private LinkedList stringToProposerLinkedList(String s, LinkedList<Proposer> list) {
+    private LinkedList stringToProposerLinkedList(String s,
+                                                  LinkedList<Proposer> list) {
         LinkedList<Person> preferences = new LinkedList<>();
         String[] rawPreferences = s.split("\\s+");
         for (int i = 0; i < rawPreferences.length; i++) {
@@ -265,6 +266,17 @@ public class StableMatching extends Application {
         return preferences;
     }
 
+    private LinkedList<Proposer> getUnmatchedProposers(List<Proposer> people) {
+        LinkedList<Proposer> unmatchedPeople = new LinkedList<>();
+        for (Proposer p : people) {
+            if (p.isEngaged == false) {
+                unmatchedPeople.add(p);
+            }
+        }
+        return unmatchedPeople;
+    }
+
+    
     /**
      * @param args the command line arguments
      */
