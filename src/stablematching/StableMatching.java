@@ -26,7 +26,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 
 public class StableMatching extends Application {
 
@@ -135,13 +134,14 @@ public class StableMatching extends Application {
         LinkedList<Proposer> unmatchedProposers = problem.getUnmatchedProposers(ProposerList);
         Acceptor a;
         while (!unmatchedProposers.isEmpty()) {
-            for (Proposer p : ProposerList) {
-                a = p.nextPref();
+            for (Proposer p : unmatchedProposers) {
+                a = (Acceptor) p.nextPref();
                 if (a.isPreferable(p)) {
+                    if (a.isEngaged) a.getPartner().removePartner();
                     a.setPartner(p);
+                    a.isEngaged = true;
                     p.setPartner(a);
-                } else {
-                    p.setPartner(null);
+                    p.isEngaged = true;
                 }
             }
             unmatchedProposers = problem.getUnmatchedProposers(ProposerList);

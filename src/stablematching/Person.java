@@ -1,22 +1,24 @@
 package stablematching;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 public abstract class Person {
     private final String             name;
     public LinkedList<Person> preferences;
     private      Person             partner;
-    Person(String name, LinkedList preferences) {
-        this.name = name;
-        this.preferences = preferences;
-    }
+    ListIterator<Person> prefIter;
+    public boolean isEngaged = false;
     
     Person(String name) {
         this.name = name;
     }
     
     public void removePartner() {
-        partner = null;
+        if (isEngaged = true) {
+           partner = null; 
+           isEngaged = false;
+        }
     }
     
     public void setPartner(Person partner) {
@@ -25,6 +27,7 @@ public abstract class Person {
     
     public void setPreferences(LinkedList<Person> preferences) {
         this.preferences = preferences;
+        prefIter = preferences.listIterator();
     }
     
     public String outputPreferences() {
@@ -40,8 +43,7 @@ public abstract class Person {
     }
     
     public String getPartnerName() {
-        return "Test";
-        //return this.partner.name;
+        return this.partner.name;
     }
     
     public String getName() {

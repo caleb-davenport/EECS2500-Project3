@@ -1,15 +1,9 @@
 package stablematching;
 
 import java.util.LinkedList;
-import javafx.util.Pair;
-
-import javax.lang.model.element.Element;
 import java.util.List;
 import javafx.collections.ObservableList;
 
-/**
- * Created by rmartin- on 9/30/16.
- */
 public class Problem {
     protected List<Proposer> ProposerList;
     protected List<Acceptor> AcceptorList;
@@ -45,16 +39,10 @@ public class Problem {
         AcceptorList.set(index, acceptor);
     }
     
-//    void facilitateProposal(Proposer p) {
-//        switch (p) {
-//            case
-//        }
-//    }
-    
     LinkedList<Proposer> getUnmatchedProposers(List<Proposer> people) {
         LinkedList<Proposer> unmatchedPeople = new LinkedList<>();
         for (Proposer p : people) {
-            if (p.getPartner() == null) {
+            if (p.isEngaged == false) {
                 unmatchedPeople.add(p);
             }
         }
