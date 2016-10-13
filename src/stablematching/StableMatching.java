@@ -95,7 +95,7 @@ public class StableMatching extends Application {
             public void handle(ActionEvent event) {
                 System.out.println("List of People");
                 try {
-                    startProblem();
+                    startProblem(false);
                     displayMarriages();
                 } catch (Exception e) {
                 }
@@ -133,42 +133,77 @@ public class StableMatching extends Application {
         TABLE.setPlaceholder(new Label("No marriages generated yet."));
     }
 
-    public void startProblem() throws Exception {
+    public void startProblem(boolean firstProposes) throws Exception {
         File f = new File(FILE_NAME);
         Scanner fileInput = new Scanner(f);
+        LinkedList preferences;
         numCouples = fileInput.nextInt();
         fileInput.nextLine();
         for (int i = 0; i < numCouples * 2; i = i + 2) {
             String name = fileInput.nextLine();
             fileInput.nextLine();
-            Proposer p = new Proposer(name);
-            ProposerList.add(p);
+            if (firstProposes) {
+                Proposer p = new Proposer(name);
+                ProposerList.add(p);
+            } else {
+                Acceptor p = new Acceptor(name);
+                AcceptorList.add(p);
+            }
         }
         for (int i = 0; i < numCouples * 2; i = i + 2) {
             String name = fileInput.nextLine();
             fileInput.nextLine();
-            Acceptor p = new Acceptor(name);
-            AcceptorList.add(p);
+            if (!firstProposes) {
+                Proposer p = new Proposer(name);
+                ProposerList.add(p);
+            } else {
+                Acceptor p = new Acceptor(name);
+                AcceptorList.add(p);
+            }
         }
         fileInput = new Scanner(f);
         fileInput.nextLine();
         for (int i = 0; i < numCouples; i++) {
             String name = fileInput.nextLine();
-            LinkedList preferences = stringToAcceptorLinkedList(fileInput.nextLine(), AcceptorList);
+            if (firstProposes) {
+                preferences = stringToAcceptorLinkedList(fileInput.nextLine(),
+                        AcceptorList);
+            } else {
+                preferences = stringToProposerLinkedList(fileInput.nextLine(),
+                        ProposerList);
+            }
             for (int j = 0; j < numCouples; j++) {
-                if (ProposerList.get(j).getName().equals(name)) {
-                    ProposerList.get(j).setPreferences(preferences);
+                if (firstProposes) {
+                    if (ProposerList.get(j).getName().equals(name)) {
+                        ProposerList.get(j).setPreferences(preferences);
+                        break;
+                    }
+                } else if (AcceptorList.get(j).getName().equals(name)) {
+                    AcceptorList.get(j).setPreferences(preferences);
                     break;
                 }
             }
         }
         for (int i = 0; i < numCouples; i++) {
             String name = fileInput.nextLine();
-            LinkedList preferences = stringToProposerLinkedList(fileInput.nextLine(), ProposerList);
+            if (!firstProposes) {
+                preferences = stringToAcceptorLinkedList(fileInput.nextLine(),
+                        AcceptorList);
+            } else {
+                preferences = stringToProposerLinkedList(fileInput.nextLine(),
+                        ProposerList);
+            }
             for (int j = 0; j < numCouples; j++) {
-                if (AcceptorList.get(j).getName().equals(name)) {
-                    AcceptorList.get(j).setPreferences(preferences);
-                    break;
+                if (!firstProposes) {
+                    if (ProposerList.get(j).getName().equals(name)) {
+                        ProposerList.get(j).setPreferences(preferences);
+                        break;
+                    }
+                } else {
+                    if (AcceptorList.get(j).getName().equals(name)) {
+                        AcceptorList.get(j).setPreferences(preferences);
+                        break;
+                    } 
                 }
             }
         }
