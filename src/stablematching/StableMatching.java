@@ -40,7 +40,9 @@ public class StableMatching extends Application {
     protected LinkedList<Acceptor> AcceptorList = new LinkedList<>();
     protected Problem problem;
     protected ObservableList<Proposer> Solution = FXCollections.observableArrayList();
-    int numCouples;
+    protected int numCouples;
+    protected String FILE_NAME;
+    
 
     public StableMatching() {
         this.problem = new Problem(ProposerList, AcceptorList, Solution);
@@ -66,8 +68,15 @@ public class StableMatching extends Application {
         HBox textField = new HBox();
         Label text = new Label("Filename: ");
         TextField inputFileTextField = new TextField();
-        Button btn = new Button("Load");
-        textField.getChildren().addAll(text, inputFileTextField, btn);
+        Button textButton = new Button("Load");
+        textButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                FILE_NAME = inputFileTextField.getText();
+            }
+        });
+        textField.getChildren().addAll(text, inputFileTextField, textButton);
         
         final ToggleGroup groupSelect = new ToggleGroup();
 
@@ -114,7 +123,7 @@ public class StableMatching extends Application {
     }
 
     public void startProblem() throws Exception {
-        File f = new File("preferences.txt");
+        File f = new File(FILE_NAME);
         Scanner fileInput = new Scanner(f);
         numCouples = fileInput.nextInt();
         fileInput.nextLine();
